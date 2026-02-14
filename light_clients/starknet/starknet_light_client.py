@@ -20,6 +20,10 @@ async def get_starknet_proof():
     # Get the signature and block numbersignature
     signature = tx_details.signature  # List of field elementsblock_number
     block_number = tx_receipt.block_number
-    print(f"Starknet Tx Hash Sign: {signature} Block number:{block_number}")
+    block = await client.get_block_with_txs(block_number=block_number)
 
+    for tx in block.transactions:
+        print(hex(tx.hash),"\n")
+    #print(f"Block tx root: {block.transactions}")
+    
 asyncio.run(get_starknet_proof())

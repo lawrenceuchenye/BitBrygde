@@ -72,8 +72,27 @@ class StarknetSPV:
 
           return trace_file, memory_file
 
-    async def verify(self,anchor_contract):
-        print(self.block)
+    def gen_proof(self):
+          current_dir = os.path.dirname(os.path.abspath(__file__))
+          
+          cmd = [
+            "stone-prover-cli", "prove",
+            os.path.join(current_dir, "state_transition.cairo"),
+            "--prover-config-file", os.path.join(current_dir, "cpu_air_prover_config.json"),
+            "--parameter-file", os.path.join(current_dir, "cpu_air_params.json"),
+            "--output-file", "/home/lawuche/BrygdeSat/light_clients/starknet/StarknetSPV/proof.json",
+            "--layout", "small",
+            "--allow-missing-builtins"
+          ]
+
+          result = subprocess.run(cmd, capture_output=True, text=True)
+          if result.returncode == 0:
+             print("Proof generated successfully!")
+             print(result.stdout)
+          else:
+             print("Error generating proof:")
+             print(result.stderr)
+
 
     async def verifysibs(self):
         for tx in self.block.transactions:
